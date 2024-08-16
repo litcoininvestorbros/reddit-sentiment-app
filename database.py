@@ -119,4 +119,4 @@ def insert_data(table_name, data: dict):
     cursor.close()
     conn.close()
 
-    ##  DEBUG print("Data inserted successfully.")
+    ## DEBUG print("Data inserted successfully.")
