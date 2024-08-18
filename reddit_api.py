@@ -1,3 +1,5 @@
+"""
+"""
 from dotenv import dotenv_values
 import praw
 import nltk
@@ -8,7 +10,9 @@ import database
 # Download the VADER lexicon
 nltk.download('vader_lexicon')
 
-def run_data_collection():
+def run_data_collection(subreddit_name) -> None:
+    """
+    """
     # Load environment variables
     env = dotenv_values('./.env')
 
@@ -19,16 +23,11 @@ def run_data_collection():
         user_agent=env['R_USER_AGENT']
     )
 
-
-    # Initialize the sentiment analyzer
     sia = SentimentIntensityAnalyzer()
 
     # Stream post submissions in selected subreddit and analyze sentiment
-    subreddit_name = 'WallStreetBets'
-
     subreddit = reddit.subreddit(subreddit_name)
     submission_data = {}  # submission data storage
-
     for submission in subreddit.stream.submissions():
         if submission.stickied:  # if post is pinned, skip it
             continue
@@ -39,11 +38,11 @@ def run_data_collection():
 
         submission_data[f"{submission.id}"] = {\
             'id': submission.id,
-            'created_utc': submission.created_utc,
+            'created_utc': int(submission.created_utc),
             'num_comments': submission.num_comments,
             'score': submission.score,
             'upvote_ratio': submission.upvote_ratio,
             'sentiment': sentiment['compound']
         }
         
-        database.insert_data('sentiment', submission_data)
+        database.insert_row('sentiment', submission_data)

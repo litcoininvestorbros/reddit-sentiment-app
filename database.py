@@ -1,3 +1,5 @@
+"""
+"""
 import psycopg2
 from psycopg2 import sql
 from dotenv import dotenv_values
@@ -6,68 +8,73 @@ from dotenv import dotenv_values
 # Load environment variables
 env = dotenv_values('./.env')
 
-# Replace these values with your actual database credentials
 DB_SERVER = env['DB_SERVER']
-DB_PORT = 5432
+DB_PORT = env['DB_PORT']
 DB_USER = env['DB_USER']
 DB_PASS = env['DB_PASS']
+DB_NAME = env['DB_NAME']
+
+
+def connect_to_database():
+    """
+    """
+    conn = psycopg2.connect(
+        host = DB_SERVER,
+        port = DB_PORT,
+        user = DB_USER,
+        password = DB_PASS,
+        dbname = DB_NAME
+    )
+    return conn
 
 
 def create_database():
-    # Connect to the PostgreSQL server
-    conn = psycopg2.connect(
-        host=DB_SERVER,
-        port=DB_PORT,
-        user=DB_USER,
-        password=DB_PASS
-    )
+    """
+    """
+    def connect_to_db_server():
+        """
+        """
+        conn = psycopg2.connect(
+            host = DB_SERVER,
+            port = DB_PORT,
+            user = DB_USER,
+            password = DB_PASS
+        )
+        return conn
 
+    conn = connect_to_db_server()
+    
     # Create a cursor object
     cursor = conn.cursor()
 
-    # Define the new database name
-    new_db_name = "reddit_3"
-
     # Check if the database already exists
-    cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (new_db_name,))
+    cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,))
     exists = cursor.fetchone()
 
     if not exists:
-        # Close the cursor and connection before creating the database
+        # Close and reconnect before creating the database
         cursor.close()
         conn.close()
-
-        # Reconnect to the server without a transaction block
-        conn = psycopg2.connect(
-            host=DB_SERVER,
-            port=DB_PORT,
-            user=DB_USER,
-            password=DB_PASS
-        )
-        conn.autocommit = True  # Enable autocommit mode
+        
+        conn = connect_to_db_server()
+        conn.autocommit = True
         cursor = conn.cursor()
-
+        
         # Create the new database
-        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(new_db_name)))
-        print(f"Database '{new_db_name}' created successfully.")
+        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(DB_NAME)))
+        print(f"Database '{DB_NAME}' created OK")
 
 
-def create_table():
-    # Reconnect to the new database to create the table and insert data
-    conn = psycopg2.connect(
-        host=DB_SERVER,
-        port=DB_PORT,
-        user=DB_USER,
-        password=DB_PASS,
-        dbname='reddit_3'
-    )
+def create_table(table_name):
+    """
+    """
+    conn = connect_to_database()
     cursor = conn.cursor()
 
-    # Define the table name and columns
-    table_name = "sentiment"
+    # Define columns
     columns = {
         "id": "VARCHAR(255)",
-        'created_utc': "FLOAT",
+        'created_utc': "INTEGER",
         'num_comments': "INTEGER",
         'score': "INTEGER",
         'upvote_ratio': "FLOAT",
@@ -88,15 +95,10 @@ def create_table():
     conn.commit()
 
 
-def insert_data(table_name, data: dict):
-    # Reconnect to the new database to create the table and insert data
-    conn = psycopg2.connect(
-        host=DB_SERVER,
-        port=DB_PORT,
-        user=DB_USER,
-        password=DB_PASS,
-        dbname='reddit_3'
-    )
+def insert_row(table_name: str, data: dict) -> None:
+    """
+    """
+    conn = connect_to_database()
     cursor = conn.cursor()
     
     # Insert data into the table
@@ -112,11 +114,8 @@ def insert_data(table_name, data: dict):
         )
         cursor.execute(insert_query, values)
 
-    # Commit the changes
     conn.commit()
-
-    # Close the cursor and connection
     cursor.close()
     conn.close()
 
-    ## DEBUG print("Data inserted successfully.")
+    ####print("data insert OK")
