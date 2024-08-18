@@ -33,7 +33,7 @@ def run_data_collection(subreddit_name) -> None:
             continue
         if not submission.selftext:  # if post doesn't contain text, skip it
             continue
-        
+
         sentiment = sia.polarity_scores(submission.selftext)
 
         submission_data[f"{submission.id}"] = {\
@@ -44,5 +44,4 @@ def run_data_collection(subreddit_name) -> None:
             'upvote_ratio': submission.upvote_ratio,
             'sentiment': sentiment['compound']
         }
-        
         database.insert_row('sentiment', submission_data)

@@ -43,7 +43,7 @@ def create_database():
         return conn
 
     conn = connect_to_db_server()
-    
+
     # Create a cursor object
     cursor = conn.cursor()
 
@@ -55,31 +55,21 @@ def create_database():
         # Close and reconnect before creating the database
         cursor.close()
         conn.close()
-        
+
         conn = connect_to_db_server()
         conn.autocommit = True
         cursor = conn.cursor()
-        
+
         # Create the new database
         cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(DB_NAME)))
         print(f"Database '{DB_NAME}' created OK")
 
 
-def create_table(table_name):
+def create_table(table_name, columns):
     """
     """
     conn = connect_to_database()
     cursor = conn.cursor()
-
-    # Define columns
-    columns = {
-        "id": "VARCHAR(255)",
-        'created_utc': "INTEGER",
-        'num_comments': "INTEGER",
-        'score': "INTEGER",
-        'upvote_ratio': "FLOAT",
-        'sentiment': "FLOAT"
-    }
 
     # Create the table
     create_table_query = sql.SQL(
@@ -100,7 +90,7 @@ def insert_row(table_name: str, data: dict) -> None:
     """
     conn = connect_to_database()
     cursor = conn.cursor()
-    
+
     # Insert data into the table
     for _, row in data.items():
         columns = row.keys()
@@ -118,4 +108,24 @@ def insert_row(table_name: str, data: dict) -> None:
     cursor.close()
     conn.close()
 
-    ####print("data insert OK")
+
+def initialize_db_and_tables():
+    """Create database and tables in local environment,
+    if they don't exist.
+    """
+    # Define tables and columns' data types
+    tables = {
+        'sentiment': {
+            "id": "VARCHAR(255)",
+            'created_utc': "INTEGER",
+            'num_comments': "INTEGER",
+            'score': "INTEGER",
+            'upvote_ratio': "FLOAT",
+            'sentiment': "FLOAT"
+        }
+    }
+
+    create_database()
+
+    for table_name, columns in tables.items():
+        create_table(table_name, columns)
