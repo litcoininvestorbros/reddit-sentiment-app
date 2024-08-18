@@ -6,9 +6,9 @@ import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import database
 
-
 # Download the VADER lexicon
 nltk.download('vader_lexicon')
+
 
 def run_data_collection(subreddit_name) -> None:
     """

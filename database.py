@@ -28,12 +28,10 @@ def connect_to_database():
     return conn
 
 
-def create_database():
+def create_database() -> None:
     """
     """
     def connect_to_db_server():
-        """
-        """
         conn = psycopg2.connect(
             host = DB_SERVER,
             port = DB_PORT,
@@ -65,7 +63,7 @@ def create_database():
         print(f"Database '{DB_NAME}' created OK")
 
 
-def create_table(table_name, columns):
+def create_table(table_name, columns) -> None:
     """
     """
     conn = connect_to_database()
@@ -113,6 +111,8 @@ def initialize_db_and_tables():
     """Create database and tables in local environment,
     if they don't exist.
     """
+    create_database()
+
     # Define tables and columns' data types
     tables = {
         'sentiment': {
@@ -124,8 +124,5 @@ def initialize_db_and_tables():
             'sentiment': "FLOAT"
         }
     }
-
-    create_database()
-
     for table_name, columns in tables.items():
         create_table(table_name, columns)
