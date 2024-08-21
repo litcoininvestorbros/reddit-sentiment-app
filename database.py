@@ -6,7 +6,7 @@ from dotenv import dotenv_values
 
 
 # Load environment variables
-env = dotenv_values('./.env')
+env = dotenv_values('.env')
 
 DB_SERVER = env['DB_SERVER']
 DB_PORT = env['DB_PORT']
