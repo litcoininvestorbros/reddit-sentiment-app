@@ -1,5 +1,5 @@
-'''
-'''
+"""
+"""
 import psycopg2
 from psycopg2 import sql
 from dotenv import dotenv_values
@@ -16,8 +16,8 @@ DB_NAME = env['DB_NAME']
 
 
 def connect_to_database():
-    '''
-    '''
+    """
+    """
     conn = psycopg2.connect(
         host = DB_SERVER,
         port = DB_PORT,
@@ -29,8 +29,8 @@ def connect_to_database():
 
 
 def create_database() -> None:
-    '''
-    '''
+    """
+    """
     def connect_to_db_server():
         conn = psycopg2.connect(
             host = DB_SERVER,
@@ -46,7 +46,7 @@ def create_database() -> None:
     cursor = conn.cursor()
 
     # Check if the database already exists
-    cursor.execute('SELECT 1 FROM pg_database WHERE datname = %s', (DB_NAME,))
+    cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,))
     exists = cursor.fetchone()
 
     if not exists:
@@ -59,23 +59,23 @@ def create_database() -> None:
         cursor = conn.cursor()
 
         # Create the new database
-        cursor.execute(sql.SQL('CREATE DATABASE {}').format(sql.Identifier(DB_NAME)))
-        print(f'Database '{DB_NAME}' created OK')
+        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(DB_NAME)))
+        print(f"Database '{DB_NAME}' created OK")
 
 
 def create_table(table_name, columns) -> None:
-    '''
-    '''
+    """
+    """
     conn = connect_to_database()
     cursor = conn.cursor()
 
     # Create the table
     create_table_query = sql.SQL(
-        'CREATE TABLE IF NOT EXISTS {} ({})'
+        "CREATE TABLE IF NOT EXISTS {} ({})"
     ).format(
         sql.Identifier(table_name),
-        sql.SQL(', ').join(
-            sql.SQL('{} {}').format(sql.Identifier(col), sql.SQL(col_type))
+        sql.SQL(", ").join(
+            sql.SQL("{} {}").format(sql.Identifier(col), sql.SQL(col_type))
             for col, col_type in columns.items()
         )
     )
@@ -84,8 +84,8 @@ def create_table(table_name, columns) -> None:
 
 
 def insert_row(table_name: str, data: dict) -> None:
-    '''
-    '''
+    """
+    """
     conn = connect_to_database()
     cursor = conn.cursor()
 
@@ -94,11 +94,11 @@ def insert_row(table_name: str, data: dict) -> None:
         columns = row.keys()
         values = [row[col] for col in columns]
         insert_query = sql.SQL(
-            'INSERT INTO {} ({}) VALUES ({}) ON CONFLICT (id) DO NOTHING;'
+            "INSERT INTO {} ({}) VALUES ({})"
         ).format(
             sql.Identifier(table_name),
-            sql.SQL(', ').join(map(sql.Identifier, columns)),
-            sql.SQL(', ').join(sql.Placeholder() * len(values))
+            sql.SQL(", ").join(map(sql.Identifier, columns)),
+            sql.SQL(", ").join(sql.Placeholder() * len(values))
         )
         cursor.execute(insert_query, values)
 
@@ -108,25 +108,21 @@ def insert_row(table_name: str, data: dict) -> None:
 
 
 def initialize_db_and_tables():
-    '''Create database and tables in local environment,
+    """Create database and tables in local environment,
     if they don't exist.
-    '''
+    """
     create_database()
 
     # Define tables and columns' data types
     tables = {
-        'submissions': {
-            'id': 'VARCHAR(8) PRIMARY KEY',
-            'created_utc': 'INTEGER',
-            'num_comments': 'INTEGER',
-            'score': 'INTEGER',
-            'upvote_ratio': 'FLOAT',
-            'sentiment': 'FLOAT'
-        }#,
-        #comments': {
-        #    'id': 'VARCHAR(8) PRIMARY KEY',
-        #    'submission_id: VARCHAR(8),
-        #    ...
+        'sentiment': {
+            "id": "VARCHAR(255) PRIMARY KEY",
+            'created_utc': "INTEGER",
+            'num_comments': "INTEGER",
+            'score': "INTEGER",
+            'upvote_ratio': "FLOAT",
+            'sentiment': "FLOAT"
+        }
     }
     for table_name, columns in tables.items():
         create_table(table_name, columns)
