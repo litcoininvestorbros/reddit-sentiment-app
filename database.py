@@ -115,7 +115,7 @@ def initialize_db_and_tables():
 
     # Define tables and columns' data types
     tables = {
-        'submissions': {
+        'sentiment': {
             "id": "VARCHAR(8) PRIMARY KEY",
             'created_utc': "INTEGER",
             'num_comments': "INTEGER",
