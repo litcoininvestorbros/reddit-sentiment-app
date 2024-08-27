@@ -5,25 +5,22 @@ from psycopg2 import sql
 from dotenv import dotenv_values
 
 
-# Load environment variables
-env = dotenv_values('.env')
-
-DB_SERVER = env['DB_SERVER']
-DB_PORT = env['DB_PORT']
-DB_USER = env['DB_USER']
-DB_PASS = env['DB_PASS']
-DB_NAME = env['DB_NAME']
+def load_env_variables() -> dict:
+    # Load environment variables
+    env = dotenv_values('.env')
+    return env
 
 
 def connect_to_database():
     """
     """
+    env = load_env_variables()
     conn = psycopg2.connect(
-        host = DB_SERVER,
-        port = DB_PORT,
-        user = DB_USER,
-        password = DB_PASS,
-        dbname = DB_NAME
+        host = env['DB_SERVER'],
+        port = env['DB_PORT'],
+        user = env['DB_USER'],
+        password = env['DB_PASS'],
+        dbname = env['DB_NAME']
     )
     return conn
 
@@ -31,12 +28,14 @@ def connect_to_database():
 def create_database() -> None:
     """
     """
+    env = load_env_variables()
+    
     def connect_to_db_server():
         conn = psycopg2.connect(
-            host = DB_SERVER,
-            port = DB_PORT,
-            user = DB_USER,
-            password = DB_PASS
+            host = env['DB_SERVER'],
+            port = env['DB_PORT'],
+            user = env['DB_USER'],
+            password = env['DB_PASS']
         )
         return conn
 
@@ -46,7 +45,7 @@ def create_database() -> None:
     cursor = conn.cursor()
 
     # Check if the database already exists
-    cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (DB_NAME,))
+    cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (env['DB_NAME'],))
     exists = cursor.fetchone()
 
     if not exists:
@@ -59,8 +58,8 @@ def create_database() -> None:
         cursor = conn.cursor()
 
         # Create the new database
-        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(DB_NAME)))
-        print(f"Database '{DB_NAME}' created OK")
+        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(env['DB_NAME'])))
+        print(f"Database '{env['DB_NAME']}' created OK")
 
 
 def create_table(table_name, columns) -> None:
