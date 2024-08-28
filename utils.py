@@ -1,28 +1,21 @@
 """
 """
-from dotenv import dotenv_values
+import os
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
-import praw
 
 # Download the VADER lexicon
 nltk.download('vader_lexicon')
 
-# Bug in prod environment requires this to be loaded 
-# in the global scope
-env = dotenv_values('.env')
 
-
-def load_reddit_api_obj():
+def load_env_variables() -> dict:
     """
     """
-    # Set up Reddit API credentials
-    reddit = praw.Reddit(
-        client_id=env['R_CLIENT_ID'],
-        client_secret=env['R_CLIENT_SECRET'],
-        user_agent=env['R_USER_AGENT']
-    )
-    return reddit
+    with open('.env', encoding='utf-8') as f:
+        for line in f:
+            if line.strip() and not line.startswith('#'):
+                key, value = line.strip().split('=', 1)
+                os.environ[key] = value
 
 
 def extract_submission_data(submission):

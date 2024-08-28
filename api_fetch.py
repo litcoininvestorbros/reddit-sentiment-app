@@ -1,15 +1,29 @@
 """
 """
+from os import getenv
 import time
+import praw
 import database
 import utils
 
 
-
-def save_initial_submissions_to_db(subreddit_name: str) -> None:
-    """Fetch submissions with pagination and save to database.
+def instanciate_reddit_api_obj():
     """
-    reddit = utils.load_reddit_api_obj()
+    """
+    # Set up Reddit API credentials
+    reddit = praw.Reddit(
+        client_id=getenv('R_CLIENT_ID'),
+        client_secret=getenv('R_CLIENT_SECRET'),
+        user_agent=getenv('R_USER_AGENT')
+    )
+    return reddit
+
+
+def fetch_paginated_to_db(subreddit_name: str) -> None:
+    """Initial fetch of submissions, using pagination. Saves results
+     to database.
+    """
+    reddit = instanciate_reddit_api_obj()
     subreddit = reddit.subreddit(subreddit_name)
 
     submissions = []
@@ -25,13 +39,14 @@ def save_initial_submissions_to_db(subreddit_name: str) -> None:
     submissions_data_0 = [utils.extract_submission_data(s) for s in submissions]
     submissions_data = [utils.apply_sentiment_score_vader(s) for s in submissions_data_0]
 
-    database.insert_rows('submissions', submissions_data)
+    database.insert_rows_to_table('submissions', submissions_data)
 
 
-def save_streamdata_to_db(subreddit_name: str) -> None:
+def fetch_stream_to_db(subreddit_name: str) -> None:
+    """Fetch of submissions, using pagination. Saves results
+     to database.
     """
-    """
-    reddit = utils.load_reddit_api_obj()
+    reddit = instanciate_reddit_api_obj()
 
     # Stream post submissions in selected subreddit and analyze sentiment
     subreddit = reddit.subreddit(subreddit_name)
@@ -41,4 +56,4 @@ def save_streamdata_to_db(subreddit_name: str) -> None:
         submission_data_0 = utils.extract_submission_data(submission)
         submission_data = utils.apply_sentiment_score_vader(submission_data_0)
 
-        database.insert_rows('submissions', submission_data)
+        database.insert_rows_to_table('submissions', submission_data)

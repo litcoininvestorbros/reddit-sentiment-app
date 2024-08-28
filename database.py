@@ -1,24 +1,20 @@
 """
 """
+from os import getenv
 from dotenv import dotenv_values
 import psycopg2
 from psycopg2 import sql
-
-
-# Bug in prod environment requires this to be loaded
-# in the global scope
-env = dotenv_values('.env')
 
 
 def connect_to_database():
     """
     """
     conn = psycopg2.connect(
-        host = env['DB_SERVER'],
-        port = env['DB_PORT'],
-        user = env['DB_USER'],
-        password = env['DB_PASS'],
-        dbname = env['DB_NAME']
+        host = getenv('DB_SERVER'),
+        port = getenv('DB_PORT'),
+        user = getenv('DB_USER'),
+        password = getenv('DB_PASS'),
+        dbname = getenv('DB_NAME')
     )
     return conn
 
@@ -28,10 +24,10 @@ def create_database() -> None:
     """
     def connect_to_db_server():
         conn = psycopg2.connect(
-            host = env['DB_SERVER'],
-            port = env['DB_PORT'],
-            user = env['DB_USER'],
-            password = env['DB_PASS']
+            host = getenv('DB_SERVER'),
+            port = getenv('DB_PORT'),
+            user = getenv('DB_USER'),
+            password = getenv('DB_PASS')
         )
         return conn
 
@@ -39,7 +35,7 @@ def create_database() -> None:
     cursor = conn.cursor()
 
     # Check if the database already exists
-    cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (env['DB_NAME'],))
+    cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (getenv('DB_NAME'),))
     exists = cursor.fetchone()
 
     if not exists:
@@ -52,8 +48,8 @@ def create_database() -> None:
         cursor = conn.cursor()
 
         # Create the new database
-        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(env['DB_NAME'])))
-        print(f"Database '{env['DB_NAME']}' created OK")
+        cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(getenv('DB_NAME'))))
+        print(f"Database '{getenv('DB_NAME')}' created OK")
 
 
 def create_table(table_name, columns) -> None:
@@ -76,7 +72,7 @@ def create_table(table_name, columns) -> None:
     conn.commit()
 
 
-def insert_rows(table_name: str, rows_data: list[dict]) -> None:
+def insert_rows_to_table(table_name: str, rows_data: list[dict]) -> None:
     """
     """
     # Ensure input `rows_data` is of type list[dict]
@@ -98,7 +94,7 @@ def insert_rows(table_name: str, rows_data: list[dict]) -> None:
             sql.SQL(", ").join(sql.Placeholder() * len(values))
         )
         cursor.execute(insert_query, values)
-        print(row, '\n\n')
+
     conn.commit()
 
     cursor.close()
@@ -127,7 +123,6 @@ def initialize_database():
             'sentiment_distilroberta': 'FLOAT'
         }
     }
-
     # Create the new database and its tables
     create_database()
     for table_name, columns in tables.items():

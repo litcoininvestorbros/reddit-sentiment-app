@@ -2,17 +2,18 @@
 """
 import database
 import api_fetch
+import utils
 
 
 def main():
     """
     """
-    target_subreddits = 'Economics+economy+stocks'
-
+    utils.load_env_variables()
     database.initialize_database()
 
-    api_fetch.save_initial_submissions_to_db(target_subreddits)
-    api_fetch.save_streamdata_to_db(target_subreddits)
+    target_subreddits = 'Economics+economy+stocks'
+    api_fetch.fetch_paginated_to_db(target_subreddits)
+    api_fetch.fetch_stream_to_db(target_subreddits)
 
 
 if __name__ == '__main__':
