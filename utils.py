@@ -1,6 +1,8 @@
 """
 """
+import errno
 import os
+from pathlib import Path
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
@@ -8,10 +10,17 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 nltk.download('vader_lexicon')
 
 
-def load_env_variables() -> dict:
+def load_env_variables():
     """
     """
-    with open('.env', encoding='utf-8') as f:
+    env_path = Path('.env')
+
+    if not env_path.is_file():
+        raise FileNotFoundError(
+            errno.ENOENT, os.strerror(errno.ENOENT), env_path
+        )
+
+    with env_path.open(encoding='utf-8') as f:
         for line in f:
             if line.strip() and not line.startswith('#'):
                 key, value = line.strip().split('=', 1)
