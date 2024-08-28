@@ -1,7 +1,6 @@
 """
 """
 from os import getenv
-from dotenv import dotenv_values
 import psycopg2
 from psycopg2 import sql
 
