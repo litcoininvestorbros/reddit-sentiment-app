@@ -5,11 +5,14 @@ import psycopg2
 from psycopg2 import sql
 
 
+# Bug in prod environment requires this to be loaded
+# in the global scope
+env = dotenv_values('.env')
+
+
 def connect_to_database():
     """
     """
-    env = dotenv_values('.env')
-
     conn = psycopg2.connect(
         host = env['DB_SERVER'],
         port = env['DB_PORT'],
@@ -23,8 +26,6 @@ def connect_to_database():
 def create_database() -> None:
     """
     """
-    env = dotenv_values('.env')
-
     def connect_to_db_server():
         conn = psycopg2.connect(
             host = env['DB_SERVER'],

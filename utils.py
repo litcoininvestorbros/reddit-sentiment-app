@@ -8,11 +8,14 @@ import praw
 # Download the VADER lexicon
 nltk.download('vader_lexicon')
 
+# Bug in prod environment requires this to be loaded 
+# in the global scope
+env = dotenv_values('.env')
+
 
 def load_reddit_api_obj():
     """
     """
-    env = dotenv_values('.env')
     # Set up Reddit API credentials
     reddit = praw.Reddit(
         client_id=env['R_CLIENT_ID'],
@@ -48,7 +51,7 @@ def apply_sentiment_score_vader(submission_data: dict) -> dict:
 
     sentiment_title = sia.polarity_scores(submission_data['title'])
     sentiment_selftext = sia.polarity_scores(submission_data['selftext'])
-    
+
     sentiment_title_vader = sentiment_title['compound']
     sentiment_selftext_vader = sentiment_selftext['compound'] if submission_data['selftext'] else None
 
