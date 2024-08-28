@@ -6,7 +6,9 @@ from dotenv import dotenv_values
 
 
 def load_env_variables() -> dict:
-    # Load environment variables
+    """Load and return environment variables
+     as a dictionary.
+    """
     env = dotenv_values('.env')
     return env
 
