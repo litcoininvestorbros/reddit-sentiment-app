@@ -109,13 +109,16 @@ def initialize_database():
         'submissions': {
             'id': 'TEXT PRIMARY KEY',
             'created_utc': 'INTEGER',
-            'title': 'TEXT',
+            'subreddit': 'TEXT',
             'author_name': 'TEXT',
+            'title': 'TEXT',
+            'selftext': 'TEXT',
             'url': 'TEXT',
             'num_comments': 'INTEGER',
             'score': 'INTEGER',
             'upvote_ratio': 'FLOAT',
             'sentiment_title_vader': 'FLOAT',
+            'sentiment_selftext_vader': 'FLOAT',
             'sentiment_distilroberta': 'FLOAT'
         }
     }
