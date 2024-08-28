@@ -2,21 +2,14 @@
 """
 import psycopg2
 from psycopg2 import sql
-from dotenv import dotenv_values
-
-
-def load_env_variables() -> dict:
-    """Load and return environment variables
-     as a dictionary.
-    """
-    env = dotenv_values('.env')
-    return env
+import utils
 
 
 def connect_to_database():
     """
     """
-    env = load_env_variables()
+    env = utils.load_env_variables()
+
     conn = psycopg2.connect(
         host = env['DB_SERVER'],
         port = env['DB_PORT'],
@@ -30,8 +23,8 @@ def connect_to_database():
 def create_database() -> None:
     """
     """
-    env = load_env_variables()
-    
+    env = utils.load_env_variables()
+
     def connect_to_db_server():
         conn = psycopg2.connect(
             host = env['DB_SERVER'],
@@ -42,8 +35,6 @@ def create_database() -> None:
         return conn
 
     conn = connect_to_db_server()
-
-    # Create a cursor object
     cursor = conn.cursor()
 
     # Check if the database already exists
@@ -84,14 +75,14 @@ def create_table(table_name, columns) -> None:
     conn.commit()
 
 
-def insert_row(table_name: str, data: dict) -> None:
+def insert_rows(table_name: str, rows_data: list[dict]) -> None:
     """
     """
     conn = connect_to_database()
     cursor = conn.cursor()
 
     # Insert data into the table
-    for _, row in data.items():
+    for row in rows_data:
         columns = row.keys()
         values = [row[col] for col in columns]
         insert_query = sql.SQL(
@@ -102,31 +93,34 @@ def insert_row(table_name: str, data: dict) -> None:
             sql.SQL(", ").join(sql.Placeholder() * len(values))
         )
         cursor.execute(insert_query, values)
-
+    
     conn.commit()
+
     cursor.close()
     conn.close()
 
 
-def initialize_db_and_tables():
-    """Create database and tables in local environment,
-    if they don't exist.
+def initialize_database():
+    """Create database and tables in the environment's database
+     server instance, if they don't exist.
     """
-    create_database()
-
-    # Define tables and columns' data types
+    # Define tables and data types
     tables = {
-        'sentiment': {
-            "id": "VARCHAR(8) PRIMARY KEY",
-            'created_utc': "INTEGER",
-            'num_comments': "INTEGER",
-            'score': "INTEGER",
-            'upvote_ratio': "FLOAT",
-            'sentiment': "FLOAT"
-        }#,
-        #comments': {
-        #    "id": "VARCHAR(8) PRIMARY KEY",
-        #    'submission_id:
+        'submissions': {
+            'id': 'TEXT PRIMARY KEY',
+            'created_utc': 'INTEGER',
+            'title': 'TEXT',
+            'author_name': 'TEXT',
+            'url': 'TEXT',
+            'num_comments': 'INTEGER',
+            'score': 'INTEGER',
+            'upvote_ratio': 'FLOAT',
+            'sentiment_title_vader': 'FLOAT',
+            'sentiment_distilroberta': 'FLOAT'
+        }
     }
+
+    # Create the new database and its tables
+    create_database()
     for table_name, columns in tables.items():
         create_table(table_name, columns)

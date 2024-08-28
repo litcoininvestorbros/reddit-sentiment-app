@@ -1,14 +1,14 @@
 """
 """
 import database
-import reddit_api
+import api_fetch
 
 
 def main():
     """
     """
-    database.initialize_db_and_tables()
-    reddit_api.run_data_collection('Economics+economy')
+    database.initialize_database()
+    api_fetch.save_streamdata_to_db('Economics+economy+stocks')
 
 
 if __name__ == '__main__':
