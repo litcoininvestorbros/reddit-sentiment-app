@@ -23,9 +23,8 @@ def connect_to_database():
 def create_database() -> None:
     """
     """
-    env = utils.load_env_variables()
-
     def connect_to_db_server():
+        env = utils.load_env_variables()
         conn = psycopg2.connect(
             host = env['DB_SERVER'],
             port = env['DB_PORT'],
@@ -38,6 +37,7 @@ def create_database() -> None:
     cursor = conn.cursor()
 
     # Check if the database already exists
+    env = utils.load_env_variables()
     cursor.execute("SELECT 1 FROM pg_database WHERE datname = %s", (env['DB_NAME'],))
     exists = cursor.fetchone()
 
