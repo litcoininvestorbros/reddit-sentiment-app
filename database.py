@@ -78,6 +78,10 @@ def create_table(table_name, columns) -> None:
 def insert_rows(table_name: str, rows_data: list[dict]) -> None:
     """
     """
+    # Ensure input `rows_data` is of type list[dict]
+    if isinstance(rows_data, dict):
+        rows_data = [rows_data]
+
     conn = connect_to_database()
     cursor = conn.cursor()
 
@@ -93,7 +97,7 @@ def insert_rows(table_name: str, rows_data: list[dict]) -> None:
             sql.SQL(", ").join(sql.Placeholder() * len(values))
         )
         cursor.execute(insert_query, values)
-    
+
     conn.commit()
 
     cursor.close()
