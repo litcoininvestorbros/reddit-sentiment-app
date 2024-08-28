@@ -7,7 +7,7 @@ import database
 import utils
 
 
-def instanciate_reddit_api_obj():
+def instantiate_reddit_api_obj():
     """
     """
     # Set up Reddit API credentials
@@ -23,7 +23,7 @@ def fetch_paginated_to_db(subreddit_name: str) -> None:
     """Initial fetch of submissions, using pagination. Saves results
      to database.
     """
-    reddit = instanciate_reddit_api_obj()
+    reddit = instantiate_reddit_api_obj()
     subreddit = reddit.subreddit(subreddit_name)
 
     submissions = []
@@ -46,7 +46,7 @@ def fetch_stream_to_db(subreddit_name: str) -> None:
     """Fetch of submissions, using pagination. Saves results
      to database.
     """
-    reddit = instanciate_reddit_api_obj()
+    reddit = instantiate_reddit_api_obj()
 
     # Stream post submissions in selected subreddit and analyze sentiment
     subreddit = reddit.subreddit(subreddit_name)
