@@ -1,6 +1,6 @@
 """
 """
-import dotenv
+from dotenv import dotenv_values
 import nltk
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import praw
@@ -9,18 +9,10 @@ import praw
 nltk.download('vader_lexicon')
 
 
-def load_env_variables() -> dict:
-    """Load and return environment variables
-     as a dictionary.
-    """
-    env = dotenv.dotenv_values('.env')
-    return env
-
-
 def load_reddit_api_obj():
     """
     """
-    env = load_env_variables()
+    env = dotenv_values('.env')
     # Set up Reddit API credentials
     reddit = praw.Reddit(
         client_id=env['R_CLIENT_ID'],
