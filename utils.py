@@ -46,7 +46,8 @@ def apply_sentiment_score_vader(submission_data: dict) -> dict:
     sentiment_selftext = sia.polarity_scores(submission_data['selftext'])
 
     sentiment_title_vader = sentiment_title['compound']
-    sentiment_selftext_vader = sentiment_selftext['compound'] if submission_data['selftext'] else None
+    sentiment_selftext_vader = sentiment_selftext['compound'] \
+        if submission_data['selftext'] else None
 
     submission_data['sentiment_title_vader'] = sentiment_title_vader
     submission_data['sentiment_selftext_vader'] = sentiment_selftext_vader
