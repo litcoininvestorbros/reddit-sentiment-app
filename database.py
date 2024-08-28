@@ -97,7 +97,7 @@ def insert_rows(table_name: str, rows_data: list[dict]) -> None:
             sql.SQL(", ").join(sql.Placeholder() * len(values))
         )
         cursor.execute(insert_query, values)
-
+        print(row, '\n\n')
     conn.commit()
 
     cursor.close()
