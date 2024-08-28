@@ -8,7 +8,7 @@ def main():
     """
     """
     database.initialize_db_and_tables()
-    reddit_api.run_data_collection('WallStreetBets')
+    reddit_api.run_data_collection('Economics+economy')
 
 
 if __name__ == '__main__':
