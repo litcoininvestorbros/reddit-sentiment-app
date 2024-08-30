@@ -14,7 +14,6 @@ def load_env_variables():
     """
     """
     env_path = Path('.env')
-
     if not env_path.is_file():
         raise FileNotFoundError(
             errno.ENOENT, os.strerror(errno.ENOENT), env_path
