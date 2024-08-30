@@ -120,6 +120,16 @@ def initialize_database():
             'sentiment_title_vader': 'FLOAT',
             'sentiment_selftext_vader': 'FLOAT',
             'sentiment_distilroberta': 'FLOAT'
+        },
+        'scraped_text': {
+            'submission_id': 'TEXT PRIMARY KEY',
+            'status': 'TEXT',
+            'text': 'TEXT'
+        },
+        'sentiment_scores': {
+            'submission_id': 'TEXT PRIMARY KEY',
+            'label': 'TEXT',
+            'score': 'FLOAT'
         }
     }
     # Create the new database and its tables

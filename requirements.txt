@@ -1,5 +1,7 @@
 beautifulsoup4
 ftfy
+huggingface_hub
 nltk
 praw
 psycopg2-binary
+transformers
