@@ -1,0 +1,8 @@
+possible target subreddits:
+- r/WallStreetBets
+- r/Economics
+
+sentiment models to test:
+- https://huggingface.co/mrm8488/distilroberta-finetuned-financial-news-sentiment-analysis
+
+
