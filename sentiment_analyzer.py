@@ -10,5 +10,3 @@ sentiment_model = pipeline(
     truncation=True
 )
 
-def apply_sentiment_analysis():
-    pass
