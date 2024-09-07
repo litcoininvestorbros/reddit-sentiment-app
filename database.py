@@ -50,6 +50,9 @@ def create_database() -> None:
         cursor.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(getenv('DB_NAME'))))
         print(f"Database '{getenv('DB_NAME')}' created OK")
 
+    cursor.close()
+    conn.close()
+    
 
 def create_table(table_name, columns) -> None:
     """
@@ -69,6 +72,9 @@ def create_table(table_name, columns) -> None:
     )
     cursor.execute(create_table_query)
     conn.commit()
+
+    cursor.close()
+    conn.close()
 
 
 def insert_rows_to_table(table_name: str, rows_data: list[dict]) -> None:
