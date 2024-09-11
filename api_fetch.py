@@ -3,6 +3,7 @@
 from os import getenv
 import time
 import praw
+import praw.exceptions
 import database
 import utils
 
@@ -50,10 +51,16 @@ def fetch_stream_to_db(subreddit_name: str) -> None:
 
     # Stream post submissions in selected subreddit and analyze sentiment
     subreddit = reddit.subreddit(subreddit_name)
-    for submission in subreddit.stream.submissions():
-        if submission.stickied:  # if post is pinned, skip it
-            continue
-        submission_data_0 = utils.extract_submission_data(submission)
-        submission_data = utils.apply_sentiment_score_vader(submission_data_0)
-
-        database.insert_rows_to_table('submissions', submission_data)
+    try:
+        for submission in subreddit.stream.submissions():
+            if submission.stickied:  # if post is pinned, skip it
+                continue
+            submission_data_0 = utils.extract_submission_data(submission)
+            submission_data = utils.apply_sentiment_score_vader(submission_data_0)
+            database.insert_rows_to_table('submissions', submission_data)
+    except praw.exceptions.RedditAPIException as e:
+        
+        #### ADD error logging
+        
+        # Sleep and retry
+        time.sleep(120)
