@@ -58,7 +58,7 @@ def fetch_stream_to_db(subreddit_name: str) -> None:
             submission_data_0 = utils.extract_submission_data(submission)
             submission_data = utils.apply_sentiment_score_vader(submission_data_0)
             database.insert_rows_to_table('submissions', submission_data)
-    except praw.exceptions.RedditAPIException as e:
+    except praw.exceptions.PRAWException as e:
         
         #### ADD error logging
         
