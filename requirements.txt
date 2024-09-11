@@ -5,3 +5,4 @@ nltk
 praw
 psycopg2-binary
 transformers
+torch

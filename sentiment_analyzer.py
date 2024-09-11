@@ -9,4 +9,3 @@ sentiment_model = pipeline(
     max_length=512,
     truncation=True
 )
-
