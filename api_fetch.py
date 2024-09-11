@@ -57,4 +57,3 @@ def fetch_stream_to_db(subreddit_name: str) -> None:
         submission_data = utils.apply_sentiment_score_vader(submission_data_0)
 
         database.insert_rows_to_table('submissions', submission_data)
-        print('insert')
