@@ -4,5 +4,6 @@ huggingface_hub
 nltk
 praw
 psycopg2-binary
+tensorflow
+tf-keras
 transformers
-torch
